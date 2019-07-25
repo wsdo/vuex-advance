@@ -16,7 +16,7 @@ module.exports = {
     }
   },
   devServer: {
-    port: 6000,
+    port: 8080,
     disableHostCheck: true,
     proxy: {
       '/v1': { // 代理api
