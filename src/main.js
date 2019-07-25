@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
-import stark from './stark'
+import stark from './store'
 
 Vue.config.productionTip = false
 

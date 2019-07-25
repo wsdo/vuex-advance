@@ -1,7 +1,8 @@
 <template>
   <div :class="$style.hello">
-    <h1>{{ count }}</h1>
+    <!-- <h1>{{ count }}</h1> -->
     <button @click="add">add</button>
+    <button @click="actionAddNum">actionAddNum</button>
   </div>
 </template>
 
@@ -9,17 +10,20 @@
 import stark from './stark.css'
 export default {
   name: 'HelloWorld',
-  computed: {
-    count() {
-      return this.$stark.state.count
-    },
-  },
+  // computed: {
+  //   count() {
+  //     return this.$stark.state.count
+  //   },
+  // },
   created() {
-    console.log('stark', this.$stark.state)
+    console.log('getters',this.$stark.getters.addNum);
   },
   methods: {
     add(){
       this.$stark.commit('increment')
+    },
+    actionAddNum(){
+      this.$stark.dispatch('addNum');
     }
   }
 }

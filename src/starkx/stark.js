@@ -2,14 +2,24 @@ import applyMixin from './mixin'
 import Vue from 'vue'
 export class Stark {
   constructor(options = {}) {
+    if (!Vue && typeof window !== 'undefined' && window.Vue) {
+      install(window.Vue)
+    }
     console.log('options', options)
     this.options = options
+    this.getters = {}
     this.mutations = {}
-    const { commit } = this
+    const { dispatch, commit } = this
+    this.actions = {}
     this.commit = type => {
       return commit.call(this, type)
     }
-
+    this.dispatch = type => {
+      return dispatch.call(this, type)
+    }
+    forEachValue(options.actions, (actionFn, actionName) => {
+      registerAction(this, actionName, actionFn)
+    })
     forEachValue(options.getters, (getterFn, getterName) => {
       registerGetter(this, getterName, getterFn)
     })
@@ -17,12 +27,7 @@ export class Stark {
     forEachValue(options.mutations, (mutationFn, mutationName) => {
       registerMutation(this, mutationName, mutationFn)
     })
-    // 数据响应式
-    this._vm = new Vue({
-      data: {
-        state: options.state,
-      },
-    })
+    resetStoreVM(this, options.state)
   }
   get state() {
     return this.options.state
@@ -32,6 +37,7 @@ export class Stark {
     this.mutations[type]()
   }
 }
+
 function registerGetter(store, getterName, getterFn) {
   Object.defineProperty(store.getters, getterName, {
     get: () => {
@@ -39,6 +45,20 @@ function registerGetter(store, getterName, getterFn) {
     },
   })
 }
+function resetStoreVM(store, state) {
+  store._vm = new Vue({
+    data: {
+      state: state,
+    },
+  })
+}
+
+function registerAction(store, actionName, actionFn) {
+  store.actions[actionName] = () => {
+    actionFn.call(store, store)
+  }
+}
+
 function registerMutation(store, mutationName, mutationFn) {
   store.mutations[mutationName] = () => {
     mutationFn.call(store, store.state)

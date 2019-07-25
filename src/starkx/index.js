@@ -1,6 +1,6 @@
-import { Stark, install } from './stark'
+import { Store, install } from './store'
 
 export default {
-  Stark,
+  Store,
   install,
 }
